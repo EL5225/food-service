@@ -2,8 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import { lazily } from "react-lazily";
 import { Suspense } from "react";
 import { Navbar, Spinner } from "../components";
-import { Register } from "../pages";
-const { Home, Login } = lazily(() => import("../pages"));
+const { Home, Login, Register } = lazily(() => import("../pages"));
 
 const router = createBrowserRouter([
   {
@@ -11,7 +10,7 @@ const router = createBrowserRouter([
     element: (
       <Suspense fallback={<Spinner />}>
         <Navbar />
-        <Home />,
+        <Home />
       </Suspense>
     ),
   },
@@ -19,8 +18,7 @@ const router = createBrowserRouter([
     path: "/login",
     element: (
       <Suspense fallback={<Spinner />}>
-        <Navbar />
-        <Login />,
+        <Login />
       </Suspense>
     ),
   },
@@ -28,8 +26,7 @@ const router = createBrowserRouter([
     path: "/register",
     element: (
       <Suspense fallback={<Spinner />}>
-        <Navbar />
-        <Register />,
+        <Register />
       </Suspense>
     ),
   },
