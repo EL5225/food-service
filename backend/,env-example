@@ -1,0 +1,5 @@
+PORT=
+DATABASE_URL=
+DIRECT_URL=
+
+SECRET_KEY=private_key_food_service
