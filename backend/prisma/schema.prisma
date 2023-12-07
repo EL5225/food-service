@@ -22,3 +22,27 @@ model Users {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Resep {
+  id                   Int          @id @default(autoincrement())
+  name                 String
+  description          String
+  history              String
+  culture              String
+  ingredients          String
+  alternatifIngredient String?
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+  deletedAt            DateTime?
+  resepImages          ResepImage[]
+}
+
+model ResepImage {
+  id        Int       @id @default(autoincrement())
+  image_url String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  resepId   Int
+  resep     Resep     @relation(fields: [resepId], references: [id])
+}

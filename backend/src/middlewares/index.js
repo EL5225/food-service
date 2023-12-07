@@ -41,4 +41,20 @@ const authMiddleware = async (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+const adminMiddleware = (req, res, next) => {
+  const currentUser = req.user;
+
+  if (!currentUser || currentUser.role !== 'admin') {
+    return res.status(403).json({
+      message: 'Akses ditolak!',
+    });
+  }
+
+  next();
+};
+
+
+module.exports = {
+  authMiddleware,
+  adminMiddleware,
+};
