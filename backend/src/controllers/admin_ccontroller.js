@@ -29,7 +29,7 @@ const createResepImage = async (req, res, next) => {
         });
 
         res.status(201).json({
-          message: 'Resep image created successfully',
+          message: 'Gambar untuk resep ini telah ditambahkan',
           data: {
             id: createdResepImage.id,
             url: createdResepImage.image_url
@@ -56,11 +56,9 @@ const createResepImage = async (req, res, next) => {
   }
 };
 
-
-
 const createResep = async (req, res, next) => {
   try {
-    const { name, description, history, culture, ingredients, alternatifIngredient } = req.body;
+    const { name, description, history, culture, ingredients, alternatifIngredient, categories_id } = req.body;
     VSResep.parse(req.body);
 
     const resep = await prisma.resep.create({
@@ -71,8 +69,13 @@ const createResep = async (req, res, next) => {
         culture,
         ingredients,
         alternatifIngredient,
+        categories: {
+          connect : {
+            id: categories_id,
+          }
+        }
       },
-      select : {
+      select: {
         id: true,
         name: true,
         description: true,
@@ -80,11 +83,12 @@ const createResep = async (req, res, next) => {
         culture: true,
         ingredients: true,
         alternatifIngredient: true,
-      }
+        categories: true,
+      },
     });
 
     res.status(201).json({
-      message: 'Resep created successfully',
+      message: 'Berhasil membuat resep baru',
       resep,
     });
   } catch (error) {
@@ -93,40 +97,71 @@ const createResep = async (req, res, next) => {
 };
 
 const getAllResep = async (req, res, next) => {
-    try {
-      const resepList = await prisma.resep.findMany({
-        where: {
-          deletedAt: null,
-          
+  try {
+    const { search } = req.query;
+
+    let whereClause = {
+      deletedAt: null,
+    };
+
+    if (search) {
+      whereClause = {
+        ...whereClause,
+        name: {
+          contains: search,
+          mode: 'insensitive',
         },
-        select: {
-          id: true,
-          name: true,
-          description: true,
-          history: true,
-          culture: true,
-          ingredients: true,
-          alternatifIngredient: true,
-          resepImages: {
-            where: {
-              deletedAt: null,
-            },
-            select: {
-              id: true,
-              image_url: true,
-            }
-          }
-        },
-      });
-  
-      res.status(200).json({
-        message: 'List of all resep',
-        data: resepList,
-      });
-    } catch (error) {
-      next(error);
+      };
     }
-  };
+
+    const resepList = await prisma.resep.findMany({
+      where: whereClause,
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        history: true,
+        culture: true,
+        ingredients: true,
+        alternatifIngredient: true,
+        resepImages: {
+          where: {
+            deletedAt: null,
+          },
+          select: {
+            id: true,
+            image_url: true,
+          },
+        },
+        categories: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    const resepListWithCount = await Promise.all(resepList.map(async (resep) => {
+      const userCount = await prisma.savedRecipe.count({
+        where: {
+          resepId: resep.id,
+        },
+      });
+      return {
+        ...resep,
+        userCount,
+      };
+    }));
+
+    res.status(200).json({
+      message: 'Daftar resep',
+      data: resepListWithCount,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
   const deleteResep = async (req, res, next) => {
     try {
@@ -143,12 +178,12 @@ const getAllResep = async (req, res, next) => {
   
       if (!deletedResep) {
         return res.status(404).json({
-          message: 'Resep not found.',
+          message: 'resep tidak ditemukan.',
         });
       }
   
       res.status(200).json({
-        message: 'Resep deleted successfully.',
+        message: 'berhasil menghapus resep.',
       });
     } catch (error) {
       console.error(error);
@@ -173,7 +208,7 @@ const updateResep = async (req, res, next) => {
 
     if (!existingResep) {
       return res.status(404).json({
-        message: 'Resep not found',
+        message: 'resep tidak ditemukan',
       });
     }
 
@@ -223,7 +258,7 @@ const deleteResepImage = async (req, res, next) => {
 
     if (!existingResepImage || existingResepImage.resepId !== parseInt(resepId)) {
       return res.status(404).json({
-        message: 'Resep image not found',
+        message: 'gambar pada resep ini tidak ditemukan',
       });
     }
 
@@ -237,7 +272,7 @@ const deleteResepImage = async (req, res, next) => {
     });
 
     res.status(200).json({
-      message: 'Resep image deleted successfully',
+      message: 'gambar pada resep ini berhasil dihapus',
     });
   } catch (error) {
     console.error(error);

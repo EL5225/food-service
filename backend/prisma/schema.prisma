@@ -13,28 +13,46 @@ datasource db {
 }
 
 model Users {
-  id        Int      @id @default(autoincrement())
-  avatar    String?
-  username  String
-  email     String   @unique
-  password  String
-  role      String   @default("user")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           Int           @id @default(autoincrement())
+  avatar       String?
+  username     String
+  email        String        @unique
+  password     String
+  role         String        @default("user")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  savedRecipes SavedRecipe[]
 }
 
 model Resep {
-  id                   Int          @id @default(autoincrement())
+  id                   Int           @id @default(autoincrement())
   name                 String
   description          String
   history              String
   culture              String
   ingredients          String
   alternatifIngredient String?
-  createdAt            DateTime     @default(now())
-  updatedAt            DateTime     @updatedAt
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
   deletedAt            DateTime?
+  categories_id        Int?
+  categories           Categories?   @relation(fields: [categories_id], references: [id])
   resepImages          ResepImage[]
+  savedRecipes         SavedRecipe[]
+}
+
+model SavedRecipe {
+  id      Int   @id @default(autoincrement())
+  userId  Int
+  resepId Int
+  user    Users @relation(fields: [userId], references: [id])
+  resep   Resep @relation(fields: [resepId], references: [id])
+}
+
+model Categories {
+  id    Int     @id @default(autoincrement())
+  name  String
+  resep Resep[]
 }
 
 model ResepImage {
