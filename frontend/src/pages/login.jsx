@@ -1,14 +1,13 @@
+import { ToastContainer, toast } from "react-toastify";
+import { useLogin, setToken } from "../utils";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, TextField } from "../components";
-import { AuthLayout } from "../layouts/AuthLayout";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AuthLayout } from "../layouts";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { VSLogin } from "../libs";
-import { useLogin } from "../utils/hooks";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { setToken } from "../utils/token";
 
 export const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -41,11 +40,11 @@ export const Login = () => {
       setToken(token);
       setIsLoading(false);
 
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       setIsLoading(false);
 
-      toast.error("Daftar Akun Gagal", {
+      toast.error("Masuk Akun Gagal", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,

@@ -3,12 +3,9 @@ import ReactDOM from "react-dom/client";
 import router from "./routers";
 import { RouterProvider } from "react-router-dom";
 import "./index.css";
-import { MainLayout } from "./layouts/MainLayout";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <MainLayout>
-      <RouterProvider router={router} />
-    </MainLayout>
+    <RouterProvider router={router} />
   </React.StrictMode>
 );

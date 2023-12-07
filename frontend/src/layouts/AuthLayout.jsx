@@ -1,8 +1,9 @@
 import { FormProvider } from "react-hook-form";
+import { Link } from "react-router-dom";
 
 export const AuthLayout = ({ children, title, onSubmit, form }) => {
   return (
-    <section className="w-full h-screen flex items-center">
+    <main className="w-full h-screen flex items-center">
       <div className="lg:w-[60%] w-full h-full flex flex-col justify-center items-center bg-slate-50">
         <div className="flex flex-col gap-6 xl:w-[30rem] md:w-[65%] w-[70%] p-4">
           <h1 className="md:text-3xl text-2xl font-bold">{title}</h1>
@@ -14,10 +15,12 @@ export const AuthLayout = ({ children, title, onSubmit, form }) => {
         </div>
       </div>
       <div className="lg:flex hidden w-[40%] h-full justify-center items-center bg-black">
-        <figure className="w-full flex justify-center items-center">
-          <img src="/resepku-black.png" alt="resepku-icon" />
-        </figure>
+        <Link to="/">
+          <figure className="w-full flex justify-center items-center">
+            <img src="/resepku-black.png" alt="resepku-icon" />
+          </figure>
+        </Link>
       </div>
-    </section>
+    </main>
   );
 };

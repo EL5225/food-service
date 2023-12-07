@@ -1,34 +1,79 @@
 import { createBrowserRouter } from "react-router-dom";
 import { lazily } from "react-lazily";
 import { Suspense } from "react";
-import { Navbar, Spinner } from "../components";
-const { Home, Login, Register } = lazily(() => import("../pages"));
+import { Loading, Navbar } from "../components";
+import { Protected, UnProtected } from "./guard";
+import { ContentLayout, DashboardLayout } from "../layouts";
+
+const { Home, Login, Register, Beranda, Detail, Favorit } = lazily(() =>
+  import("../pages")
+);
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <Suspense fallback={<Spinner />}>
-        <Navbar />
-        <Home />
-      </Suspense>
+      <UnProtected>
+        <Suspense
+          fallback={
+            <Loading
+              backgroundColor="bg-black"
+              color="fill-white text-zinc-700"
+            />
+          }>
+          <Navbar />
+          <ContentLayout className="bg-black text-slate-50" />
+        </Suspense>
+      </UnProtected>
     ),
+    children: [
+      {
+        path: "",
+        element: <Home />,
+      },
+    ],
   },
   {
     path: "/login",
     element: (
-      <Suspense fallback={<Spinner />}>
-        <Login />
-      </Suspense>
+      <UnProtected>
+        <Suspense fallback={<Loading />}>
+          <Login />
+        </Suspense>
+      </UnProtected>
     ),
   },
   {
     path: "/register",
     element: (
-      <Suspense fallback={<Spinner />}>
-        <Register />
-      </Suspense>
+      <UnProtected>
+        <Suspense fallback={<Loading />}>
+          <Register />
+        </Suspense>
+      </UnProtected>
     ),
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <Protected>
+        <DashboardLayout />
+      </Protected>
+    ),
+    children: [
+      {
+        path: "",
+        element: <Beranda />,
+      },
+      {
+        path: "favorites",
+        element: <Favorit />,
+      },
+      {
+        path: "detail/:id",
+        element: <Detail />,
+      },
+    ],
   },
 ]);
 

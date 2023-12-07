@@ -1,9 +1,13 @@
-export const Spinner = ({ width = "w-14", height = "h-14" }) => {
+export const Spinner = ({
+  width = "w-14",
+  height = "h-14",
+  color = "fill-black text-gray-200",
+}) => {
   return (
     <div role="status">
       <svg
         aria-hidden="true"
-        className={`${width} ${height} text-gray-200 animate-spin dark:text-gray-600 fill-black`}
+        className={`${width} ${height} animate-spin dark:text-gray-600 ${color}`}
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg">

@@ -1,12 +1,12 @@
-import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 import { Button, TextField } from "../components";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthLayout } from "../layouts/AuthLayout";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { VSRegister } from "../libs";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRegister } from "../utils/hooks";
-import { ToastContainer, toast } from "react-toastify";
+import { useRegister } from "../utils";
+import { Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 
 export const Register = () => {
@@ -82,7 +82,7 @@ export const Register = () => {
         pauseOnHover
         theme="light"
       />
-      <TextField name="name" label="Nama" errors={errors.nama} />
+      <TextField name="name" label="Nama" errors={errors.name} />
       <TextField name="email" label="Email" errors={errors.email} />
       <TextField
         type="password"

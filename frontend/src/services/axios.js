@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getToken } from "../utils/token";
+import { getToken } from "../utils";
 
 const config = {
   baseURL: import.meta.env.VITE_REACT_APP_API_URL,

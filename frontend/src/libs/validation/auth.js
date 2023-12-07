@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const VSRegister = z.object({
-  nama: z.string({ required_error: "Nama tidak boleh kosong" }).min(1, {
+  name: z.string({ required_error: "Nama tidak boleh kosong" }).min(1, {
     message: "Nama tidak harus diisi",
   }),
   email: z

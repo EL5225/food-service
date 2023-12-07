@@ -1,8 +1,10 @@
-export const ContentLayout = ({ children, className }) => {
+import { Outlet } from "react-router-dom";
+
+export const ContentLayout = ({ className }) => {
   return (
-    <section
-      className={`w-full h-full flex flex-col items-center justify-center ${className}`}>
-      {children}
-    </section>
+    <main
+      className={`w-full md:h-[88vh] flex flex-col items-center justify-center ${className}`}>
+      <Outlet />
+    </main>
   );
 };
