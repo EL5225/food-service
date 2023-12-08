@@ -3,5 +3,5 @@ export * from "./navbar";
 export * from "./inputs";
 export * from "./icons";
 export * from "./loadings";
-export * from "./card";
+export * from "./Card";
 export * from "./sidebar";
