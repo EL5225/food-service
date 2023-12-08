@@ -9,6 +9,7 @@ export const TextField = ({
   required,
   type = "text",
   errors,
+  disabled,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const { field } = useController({
@@ -16,6 +17,7 @@ export const TextField = ({
     rules: {
       required,
     },
+    disabled,
   });
 
   const tooglePassword = (e) => {

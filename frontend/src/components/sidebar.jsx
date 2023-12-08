@@ -1,19 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { Heart, House, Logout } from "./icons";
-import { getUserMe, removeToken } from "../utils";
+import { getUserMe, removeToken, useUserData } from "../utils";
 import { Link, useNavigate } from "react-router-dom";
 
 export const Sidebar = () => {
-  const [user, setUser] = useState(null);
-
+  const { getUserData, setUserData } = useUserData();
   const getUser = async () => {
     try {
       const data = await getUserMe();
-      setUser(data.user);
+      setUserData(data.user);
     } catch (error) {
       console.error(error);
     }
   };
+
+  const user = useMemo(() => {
+    return getUserData;
+  }, [getUserData]);
 
   useEffect(() => {
     getUser();

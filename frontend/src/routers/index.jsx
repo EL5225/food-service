@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { Loading, Navbar } from "../components";
 import { Protected, UnProtected } from "./guard";
 import { ContentLayout, DashboardLayout } from "../layouts";
+import { Profile } from "../pages";
 
 const { Home, Login, Register, Beranda, Detail, Favorit } = lazily(() =>
   import("../pages")
@@ -75,6 +76,10 @@ const router = createBrowserRouter([
         loader: ({ params }) => {
           return params;
         },
+      },
+      {
+        path: "profile",
+        element: <Profile />,
       },
     ],
   },
