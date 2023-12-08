@@ -22,6 +22,7 @@ model Users {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   savedRecipes SavedRecipe[]
+  reviews      Review[]
 }
 
 model Resep {
@@ -39,6 +40,8 @@ model Resep {
   categories           Categories?   @relation(fields: [categories_id], references: [id])
   resepImages          ResepImage[]
   savedRecipes         SavedRecipe[]
+  reviews              Review[]
+  averageRating        Float         @default(0)
 }
 
 model SavedRecipe {
@@ -63,4 +66,15 @@ model ResepImage {
   deletedAt DateTime?
   resepId   Int
   resep     Resep     @relation(fields: [resepId], references: [id])
+}
+
+model Review {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  resepId     Int
+  rating      Int
+  description String?
+  createdAt   DateTime @default(now())
+  user        Users    @relation(fields: [userId], references: [id])
+  resep       Resep    @relation(fields: [resepId], references: [id])
 }

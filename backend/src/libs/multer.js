@@ -1,7 +1,9 @@
 const multer = require("multer");
+
 const generateFilterImage = (props) => {
   const { mimetypes } = props;
   return multer({
+    storage: multer.memoryStorage(), 
     fileFilter: (req, file, cb) => {
       const allowedMimetypes = mimetypes;
       if (!allowedMimetypes.includes(file.mimetype)) {

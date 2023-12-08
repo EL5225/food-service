@@ -28,11 +28,11 @@ const createResepImage = async (req, res, next) => {
           },
         });
 
-        res.status(201).json({
+        return res.status(201).json({
           message: 'Gambar untuk resep ini telah ditambahkan',
           data: {
             id: createdResepImage.id,
-            url: createdResepImage.image_url
+            url: createdResepImage.image_url,
           },
         });
       } catch (dbError) {
@@ -46,7 +46,7 @@ const createResepImage = async (req, res, next) => {
 
     const readableStream = new Readable();
     readableStream._read = () => {};
-    readableStream.push(req.file.buffer);
+    readableStream.push(req.file?.buffer);
     readableStream.push(null);
 
     readableStream.pipe(uploadStream);
@@ -120,10 +120,8 @@ const getAllResep = async (req, res, next) => {
         id: true,
         name: true,
         description: true,
-        history: true,
+        averageRating: true,
         culture: true,
-        ingredients: true,
-        alternatifIngredient: true,
         resepImages: {
           where: {
             deletedAt: null,
@@ -133,30 +131,26 @@ const getAllResep = async (req, res, next) => {
             image_url: true,
           },
         },
-        categories: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
       },
     });
 
-    const resepListWithCount = await Promise.all(resepList.map(async (resep) => {
+  
+    const resepDetailWithCountUserSave = await Promise.all(resepList.map(async (resepMap) => {
       const userCount = await prisma.savedRecipe.count({
         where: {
-          resepId: resep.id,
-        },
-      });
+          resepId: resepMap.id,
+        }
+      })
+
       return {
-        ...resep,
-        userCount,
-      };
-    }));
+        ...resepMap,
+        saved_recipe: userCount
+      }
+    }))
 
     res.status(200).json({
       message: 'Daftar resep',
-      data: resepListWithCount,
+      data: resepDetailWithCountUserSave
     });
   } catch (error) {
     next(error);
@@ -284,33 +278,127 @@ const getResepById = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const resep = await prisma.resep.findUnique({
+    const resepById = await prisma.resep.findMany({
       where: {
         id: parseInt(id),
         deletedAt: null,
       },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        history: true,
+        culture: true,
+        ingredients: true,
+        alternatifIngredient: true,
+        averageRating: true,
         resepImages: {
           where: {
             deletedAt: null,
+          },
+          select: {
+            id: true,
+            image_url: true,
+          },
+        },
+        categories: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        reviews: {
+          select: {
+            id: true,
+            user: {
+              select: {
+                id: true,
+                username: true,
+                avatar: true,
+              },
+            },
+            rating: true,
+            description: true,
+            createdAt: true,
           },
         },
       },
     });
 
-    if (!resep) {
+    if (!resepById || resepById.length === 0) {
       return res.status(404).json({
         message: 'Resep not found',
       });
     }
 
+    const resepListWithCount = await Promise.all(resepById.map(async (resepMap) => {
+      const userCount = await prisma.savedRecipe.count({
+        where: {
+          resepId: resepMap.id,
+        },
+      });
+
+      const ratingCount = {
+        current_rating_five: 0,
+        current_rating_four: 0,
+        current_rating_three: 0,
+        current_rating_two: 0,
+        current_rating_one: 0,
+      };
+
+      resepMap.reviews.forEach((review) => {
+        switch (review.rating) {
+          case 5:
+            ratingCount.current_rating_five++;
+            break;
+          case 4:
+            ratingCount.current_rating_four++;
+            break;
+          case 3:
+            ratingCount.current_rating_three++;
+            break;
+          case 2:
+            ratingCount.current_rating_two++;
+            break;
+          case 1:
+            ratingCount.current_rating_one++;
+            break;
+          default:
+            break;
+        }
+      });
+
+      const reviewsWithFormattedDate = resepMap.reviews.map((review) => ({
+        ...review,
+        createdAt: formatDate(review.createdAt),
+      }));
+
+      return {
+        ...resepMap,
+        saved_recipe: userCount,
+        ...ratingCount,
+        reviews: reviewsWithFormattedDate,
+      };
+    }));
+
     res.status(200).json({
-      data: resep,
+      message: 'Detail resep',
+      data: resepListWithCount,
     });
   } catch (error) {
     console.error(error);
     next(error);
   }
+};
+
+const formatDate = (date) => {
+  const options = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  };
+
+  return new Date(date).toUTCString('en-US', options);
 };
 
 module.exports = {
