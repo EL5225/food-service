@@ -70,6 +70,10 @@ const getAllSavedResep = async (req, res, next) => {
     const savedRecipes = await prisma.savedRecipe.findMany({
       where: {
         userId: userId,
+        resep: {
+          deletedAt: null
+        }
+        
       },
       select: {
         resep: {

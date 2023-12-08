@@ -23,7 +23,7 @@ router.post('/resep', authMiddleware, adminMiddleware, AdminController.createRes
 router.get('/resep', AdminController.getAllResep);
 router.get('/resep/:id',AdminController.getResepById);
 router.post('/resep-image',authMiddleware, adminMiddleware, imageUpload.single('image_url'), AdminController.createResepImage);
-router.put('/resep/:id', authMiddleware, adminMiddleware, AdminController.updateResep);
+router.patch('/resep/:id', authMiddleware, adminMiddleware, AdminController.updateResep);
 router.delete('/resep/:id', authMiddleware, adminMiddleware, AdminController.deleteResep)
 router.delete('/resep/:resepId/image/:imageId', authMiddleware, adminMiddleware, AdminController.deleteResepImage)
 

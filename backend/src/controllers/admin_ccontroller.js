@@ -1,5 +1,5 @@
 const prisma = require('../libs/prisma');
-const { VSResep } = require('../libs/validation/resep');
+const { VSResep, VSUpdateResep } = require('../libs/validation/resep');
 const cloudinary = require('../libs/cloudinary');
 const { Readable } = require('stream');
 
@@ -97,7 +97,8 @@ const createResep = async (req, res, next) => {
 
 const getAllResep = async (req, res, next) => {
   try {
-    const { search } = req.query;
+    const { search, page = 1 } = req.query;
+    const limit = 8; 
 
     let whereClause = {
       deletedAt: null,
@@ -113,8 +114,25 @@ const getAllResep = async (req, res, next) => {
       };
     }
 
+    const totalCount = await prisma.resep.count({
+      where: whereClause,
+    });
+
+    if (totalCount === 0) {
+      return res.status(404).json({
+        message: 'Resep yang kamu cari belum ada',
+      });
+    }
+
+    const totalPages = Math.ceil(totalCount / limit);
+    const currentPage = Math.min(Math.max(1, parseInt(page)), totalPages);
+
+    const offset = (currentPage - 1) * limit;
+
     const resepList = await prisma.resep.findMany({
       where: whereClause,
+      skip: offset,
+      take: limit,
       select: {
         id: true,
         name: true,
@@ -133,64 +151,79 @@ const getAllResep = async (req, res, next) => {
       },
     });
 
-  
     const resepDetailWithCountUserSave = await Promise.all(resepList.map(async (resepMap) => {
       const userCount = await prisma.savedRecipe.count({
         where: {
           resepId: resepMap.id,
-        }
-      })
+        },
+      });
 
       return {
         ...resepMap,
-        saved_recipe: userCount
-      }
-    }))
+        saved_recipe: userCount,
+      };
+    }));
+
+    const meta = {
+      current_page: currentPage,
+      total_resep: totalCount,
+      total_page: totalPages,
+      next_page: currentPage < totalPages ? currentPage + 1 : null,
+      prev_page: currentPage > 1 ? currentPage - 1 : null,
+    };
 
     res.status(200).json({
       message: 'Daftar resep',
-      data: resepDetailWithCountUserSave
+      data: resepDetailWithCountUserSave,
+      meta: meta,
     });
   } catch (error) {
     next(error);
   }
 };
 
-  const deleteResep = async (req, res, next) => {
-    try {
-      const resepId = req.params.id;
-  
-      const deletedResep = await prisma.resep.update({
-        where: {
-          id: parseInt(resepId),
-        },
-        data: {
-          deletedAt: new Date(),
-        },
+
+const deleteResep = async (req, res, next) => {
+  try {
+    const resepId = req.params.id;
+
+    const existingResep = await prisma.resep.findUnique({
+      where: {
+        id: parseInt(resepId),
+      },
+    });
+
+    if (!existingResep) {
+      return res.status(404).json({
+        message: 'Resep tidak ditemukan',
       });
-  
-      if (!deletedResep) {
-        return res.status(404).json({
-          message: 'resep tidak ditemukan.',
-        });
-      }
-  
-      res.status(200).json({
-        message: 'berhasil menghapus resep.',
-      });
-    } catch (error) {
-      console.error(error);
-      next(error);
     }
-  };
+
+    await prisma.resep.update({
+      where: {
+        id: parseInt(resepId),
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+
+    res.status(200).json({
+      message: 'Berhasil menghapus resep.',
+    });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
 
 
 const updateResep = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, description, history, culture, ingredients, alternatifIngredient } = req.body;
+    const { name, description, history, culture, ingredients, alternatifIngredient, categories_id } = req.body;
 
-    VSResep.parse(req.body);
+    VSUpdateResep.parse(req.body);
 
     const existingResep = await prisma.resep.findUnique({
       where: {
@@ -205,21 +238,29 @@ const updateResep = async (req, res, next) => {
       });
     }
 
+    const updateData = {
+      name,
+      description,
+      history,
+      culture,
+      ingredients,
+      alternatifIngredient,
+    };
+
+    if (categories_id) {
+      updateData.categories = {
+        connect: {
+          id: categories_id,
+        },
+      };
+    }
+
     const updatedResep = await prisma.resep.update({
       where: {
         id: parseInt(id),
       },
-      data: {
-        name,
-        description,
-        history,
-        culture,
-        ingredients,
-        alternatifIngredient,
-      },
+      data: updateData,
     });
-
-
 
     res.status(200).json({
       message: 'Resep updated successfully',
@@ -231,7 +272,7 @@ const updateResep = async (req, res, next) => {
         culture: updatedResep.culture,
         ingredients: updatedResep.ingredients,
         alternatifIngredient: updatedResep.alternatifIngredient,
-      }
+      },
     });
   } catch (error) {
     console.error(error);

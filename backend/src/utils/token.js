@@ -10,7 +10,7 @@ const generateToken = async (user) => {
 
   const secretKey = process.env.SECRET_KEY;
 
-  const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
+  const token = jwt.sign(payload, secretKey, { expiresIn: '24h' });
   return token;
 }
 

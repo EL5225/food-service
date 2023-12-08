@@ -48,7 +48,6 @@ const addRatingAndComment = async (req, res, next) => {
       const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
       const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
   
-      // Menyimpan rata-rata rating ke tabel Resep
       await prisma.resep.update({
         where: {
           id: parseInt(resepId),
