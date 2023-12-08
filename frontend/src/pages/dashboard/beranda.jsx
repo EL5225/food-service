@@ -76,6 +76,7 @@ export const Beranda = () => {
           {filteredCards.map((card, index) => (
             <Card
               key={index}
+              id={index + 1}
               image={card.image}
               title={card.title}
               category={card.category}

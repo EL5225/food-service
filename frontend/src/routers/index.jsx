@@ -72,6 +72,9 @@ const router = createBrowserRouter([
       {
         path: "detail/:id",
         element: <Detail />,
+        loader: ({ params }) => {
+          return params;
+        },
       },
     ],
   },

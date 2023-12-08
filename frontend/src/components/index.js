@@ -1,5 +1,5 @@
-export * from "./Button";
-export * from "./Navbar";
+export * from "./button";
+export * from "./navbar";
 export * from "./inputs";
 export * from "./icons";
 export * from "./loadings";
