@@ -1,6 +1,5 @@
 const prisma = require('../libs/prisma');
 const { VSResep } = require('../libs/validation/resep');
-const util = require('util');
 const cloudinary = require('../libs/cloudinary');
 const { Readable } = require('stream');
 
@@ -370,9 +369,8 @@ const getResepById = async (req, res, next) => {
 
       const reviewsWithFormattedDate = resepMap.reviews.map((review) => ({
         ...review,
-        createdAt: formatDate(review.createdAt),
+        createdAt: review.createdAt ? formatDate(review.createdAt) : null,
       }));
-
       return {
         ...resepMap,
         saved_recipe: userCount,
@@ -398,8 +396,15 @@ const formatDate = (date) => {
     day: '2-digit',
   };
 
-  return new Date(date).toUTCString('en-US', options);
+  const formattedDate = new Date(date).toLocaleDateString('en-US', options);
+
+  const reversedDate = formattedDate.replace(/\//g, '-');
+
+  const [month, day, year] = reversedDate.split('-');
+
+  return `${year}-${month}-${day}`;
 };
+
 
 module.exports = {
   createResep,
