@@ -1,12 +1,13 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, defer } from "react-router-dom";
 import { lazily } from "react-lazily";
 import { Suspense } from "react";
 import { Loading, Navbar } from "../components";
 import { Protected, UnProtected } from "./guard";
 import { ContentLayout, DashboardLayout } from "../layouts";
 import { Profile } from "../pages";
+import { getAllSavedResep, getResepById } from "../utils";
 
-const { Home, Login, Register, Beranda, Detail, Favorit } = lazily(() =>
+const { Home, Login, Register, Beranda, DetailPage, FavoritPage } = lazily(() =>
   import("../pages")
 );
 
@@ -68,13 +69,25 @@ const router = createBrowserRouter([
       },
       {
         path: "favorites",
-        element: <Favorit />,
+        element: <FavoritPage />,
+        loader: async () => {
+          const dataPromise = getAllSavedResep();
+
+          return defer({
+            saved: dataPromise,
+          });
+        },
       },
       {
         path: "detail/:id",
-        element: <Detail />,
-        loader: ({ params }) => {
-          return params;
+        element: <DetailPage />,
+        loader: async ({ params }) => {
+          const { id } = params;
+          const dataPromise = getResepById(id);
+
+          return defer({
+            resep: dataPromise,
+          });
         },
       },
       {

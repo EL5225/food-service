@@ -1,5 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { useUpdateAvatar, useUpdateUser, useUserData } from "../../utils";
+import {
+  useAvatar,
+  useSidebarName,
+  useUpdateAvatar,
+  useUpdateUser,
+  useUserData,
+} from "../../utils";
 import { FormProvider, useForm } from "react-hook-form";
 import { Button, TextField } from "../../components";
 import { MdEdit } from "react-icons/md";
@@ -14,6 +20,9 @@ export const Profile = () => {
 
   const { updateAvatar } = useUpdateAvatar();
   const { updateUser } = useUpdateUser();
+
+  const { setGlobalAvatar } = useAvatar();
+  const { setSidebarName } = useSidebarName();
 
   const form = useForm({
     mode: "all",
@@ -51,13 +60,29 @@ export const Profile = () => {
       setIsLoading(true);
       data.image_url = avatar;
 
-      await updateAvatar(data.image_url);
+      if (data.image_url) {
+        await updateAvatar(data.image_url).then((res) => {
+          setGlobalAvatar(res.data.url);
+        });
+      }
 
-      await updateUser({
-        username: data.username,
-        email: data.email,
-        password: data.password,
-      });
+      if (!data.password) {
+        await updateUser({
+          name: data.username,
+          email: data.email,
+        }).then((res) => {
+          setSidebarName(res.data.username);
+        });
+      } else {
+        await updateUser({
+          name: data.username,
+          email: data.email,
+          password: data.password,
+        }).then((res) => {
+          setSidebarName(res.data.username);
+        });
+      }
+
       setIsLoading(false);
       setIsEditing(false);
     } catch (error) {
@@ -77,7 +102,7 @@ export const Profile = () => {
     <FormProvider {...form}>
       <form
         onSubmit={submit}
-        className="w-full h-full flex flex-col items-center border-2 gap-8 lg:px-20 lg:py-16 py-14 overflow-auto">
+        className="w-full h-full flex flex-col items-center border-2 gap-8 lg:px-20 lg:py-16 py-20 overflow-auto">
         <h1 className="lg:w-[45%] w-full flex items-center justify-center p-2 text-4xl font-bold border-2 rounded-sm bg-black text-white">
           {isEditing ? "Edit Profile" : "Profile"}
         </h1>

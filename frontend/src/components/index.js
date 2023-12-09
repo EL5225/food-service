@@ -6,3 +6,5 @@ export * from "./loadings";
 export * from "./Card";
 export * from "./sidebar";
 export * from "./comment";
+export * from "./sidebutton";
+export * from "./ratingDisplay";

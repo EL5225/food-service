@@ -11,7 +11,6 @@ export const Card = ({
   const navigate = useNavigate();
 
   const handleClick = () => {
-    console.log(id);
     if (id) {
       navigate(`/dashboard/detail/${id}`);
     }
@@ -25,7 +24,7 @@ export const Card = ({
         <img
           src={image}
           alt="card-image"
-          className="rounded-md"
+          className="rounded-md max-w-[120px] min-h-[120px] max-h-[120px]"
           width={"120px"}
         />
       </figure>

@@ -5,7 +5,17 @@ export const userData = atom({
   default: null,
 });
 
-export const allResep = atom({
-  key: "allResep",
-  default: [{}],
+export const avatar = atom({
+  key: "avatar",
+  default: null,
+});
+
+export const sidebarName = atom({
+  key: "sidebarName",
+  default: null,
+});
+
+export const showSidebar = atom({
+  key: "showSidebar",
+  default: false,
 });
