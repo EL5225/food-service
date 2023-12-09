@@ -2,6 +2,7 @@ const prisma = require('../libs/prisma');
 const bcrypt = require("bcrypt");
 const cloudinary = require('../libs/cloudinary');
 const { Readable } = require('stream');
+const { VSUpdateProfile, UpdateProfileSchema } = require('../libs/validation/user');
 
 
 
@@ -124,31 +125,43 @@ const getAllSavedResep = async (req, res, next) => {
 const updateProfile = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const { username, email, password } = req.body;
+    const { name, email, password } = UpdateProfileSchema.parse(req.body);
 
-    const existingUser = await prisma.users.findFirst({
-      where: {
-        email: email,
-        id: {
-          not: userId,
-        },
-      },
-    });
+    let updateData = {};
 
-    if (existingUser) {
-      return res.status(400).json({ message: 'Email sudah digunakan oleh pengguna lain' });
+    if (name) {
+      updateData.username = name;
     }
 
-    const hashing  = await bcrypt.hash(password, 10)
+    if (email) {
+      // Check if the new email is already in use by another user
+      const existingUser = await prisma.users.findFirst({
+        where: {
+          email: email,
+          id: {
+            not: userId,
+          },
+        },
+      });
 
+      if (existingUser) {
+        // Email is already in use, return status 409 Conflict
+        return res.status(409).json({
+          message: 'Email is already in use by another user',
+        });
+      }
+
+      updateData.email = email;
+    }
+
+    if (password) {
+      const hashing = await bcrypt.hash(password, 10);
+      updateData.password = hashing;
+    }
 
     const updatedUser = await prisma.users.update({
       where: { id: userId },
-      data: {
-        username: username || undefined,
-        email: email || undefined,
-        password: hashing || undefined,
-      },
+      data: updateData,
       select: {
         id: true,
         username: true,
@@ -164,6 +177,7 @@ const updateProfile = async (req, res, next) => {
     next(error);
   }
 };
+
 
 const updateAvatarUser = async (req, res, next) => {
   try {

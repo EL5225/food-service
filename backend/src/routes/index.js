@@ -34,7 +34,7 @@ router.get('/category', CategoryController.getAllCategories)
 //User
 router.post('/user/save/resep', authMiddleware, UserController.saveRecipes)
 router.get('/user/resep', authMiddleware, UserController.getAllSavedResep)
-router.patch('/user', authMiddleware, UserController.updateProfile)
+router.put('/user', authMiddleware, UserController.updateProfile)
 router.put('/user/avatar', authMiddleware, imageUpload.single('image_url'), UserController.updateAvatarUser)
 
 //rating
