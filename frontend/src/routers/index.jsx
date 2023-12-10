@@ -2,14 +2,21 @@ import { createBrowserRouter, defer } from "react-router-dom";
 import { lazily } from "react-lazily";
 import { Suspense } from "react";
 import { Loading, Navbar } from "../components";
-import { Protected, UnProtected } from "./guard";
+import { AdminProtected, Protected, UnProtected } from "./guard";
 import { ContentLayout, DashboardLayout } from "../layouts";
-import { Profile } from "../pages";
-import { getAllSavedResep, getResepById } from "../utils";
+import { getCategory, getResepById } from "../utils";
 
-const { Home, Login, Register, Beranda, DetailPage, FavoritPage } = lazily(() =>
-  import("../pages")
-);
+const {
+  Home,
+  Login,
+  Register,
+  Beranda,
+  DetailPage,
+  Favorit,
+  CreateResepPage,
+  EditResepPage,
+  Profile,
+} = lazily(() => import("../pages"));
 
 const router = createBrowserRouter([
   {
@@ -69,14 +76,7 @@ const router = createBrowserRouter([
       },
       {
         path: "favorites",
-        element: <FavoritPage />,
-        loader: async () => {
-          const dataPromise = getAllSavedResep();
-
-          return defer({
-            saved: dataPromise,
-          });
-        },
+        element: <Favorit />,
       },
       {
         path: "detail/:id",
@@ -93,6 +93,37 @@ const router = createBrowserRouter([
       {
         path: "profile",
         element: <Profile />,
+      },
+      {
+        path: "createresep",
+        element: (
+          <AdminProtected>
+            <CreateResepPage />
+          </AdminProtected>
+        ),
+        loader: async () => {
+          const dataPromise = getCategory();
+
+          return defer({
+            category: dataPromise,
+          });
+        },
+      },
+      {
+        path: "editresep/:id",
+        element: (
+          <AdminProtected>
+            <EditResepPage />
+          </AdminProtected>
+        ),
+        loader: async ({ params }) => {
+          const { id } = params;
+          const dataResep = getResepById(id);
+
+          return defer({
+            resep: dataResep,
+          });
+        },
       },
     ],
   },

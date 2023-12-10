@@ -32,3 +32,17 @@ export const UnProtected = ({ children }) => {
 
   return children;
 };
+
+export const AdminProtected = ({ children }) => {
+  const token = getToken();
+
+  if (token) {
+    const decoded = jwtDecode(token);
+    if (decoded.role !== "admin") {
+      return <Navigate to="/dashboard" />;
+    }
+    return children;
+  }
+
+  return <Navigate to="/login" />;
+};

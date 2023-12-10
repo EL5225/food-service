@@ -1,18 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
-import { FaHeart, FaRegHeart, FaStar } from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaStar, FaTrashAlt } from "react-icons/fa";
 import {
   Button,
   Comment,
   CommentField,
   RatingDisplay,
+  Spinner,
 } from "../../../components";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { Rating } from "@smastrom/react-rating";
-import { useAsyncValue } from "react-router-dom";
+import { useAsyncValue, useNavigate } from "react-router-dom";
 import {
+  getUserRole,
   handleDate,
   handleTime,
   useCreateReviews,
+  useDeleteResep,
   useSaveResep,
   useUserData,
 } from "../../../utils";
@@ -22,10 +25,17 @@ export const DetailContent = () => {
   const [showComment, setShowComment] = useState(false);
   const [userComment, setUserComment] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
+  const [image, setImage] = useState(null);
 
   const { getUserData } = useUserData();
 
   const dataResep = useAsyncValue();
+
+  const { deleteImage, deleteResep } = useDeleteResep();
+
+  const role = getUserRole();
+  const navigate = useNavigate();
 
   const user = useMemo(() => {
     return getUserData;
@@ -43,6 +53,10 @@ export const DetailContent = () => {
     return filteredReviews?.sort((a, b) => {
       return handleTime(a?.createdAt) - handleTime(b?.createdAt);
     });
+  });
+
+  const steps = useMemo(() => {
+    return resep?.description?.split("\n");
   });
 
   const form = useForm({
@@ -116,6 +130,20 @@ export const DetailContent = () => {
     }
   });
 
+  const handleDelete = async () => {
+    try {
+      setIsLoadingDelete(true);
+      await deleteResep(resep?.id);
+      if (resep?.resepImages?.[0]?.id) {
+        await deleteImage(resep?.id, resep?.resepImages?.[0]?.id);
+      }
+      setIsLoadingDelete(false);
+      navigate("/dashboard");
+    } catch (error) {
+      Promise.reject(error);
+    }
+  };
+
   useEffect(() => {
     const reviewedUser = resep?.reviews?.find((review) => {
       return review?.user?.id === user?.id;
@@ -125,18 +153,43 @@ export const DetailContent = () => {
     }
   }, [resep?.reviews]);
 
+  useEffect(() => {
+    const savedUser = resep?.savedRecipes?.find((save) => {
+      return save?.user?.id === user?.id;
+    });
+    if (savedUser) {
+      setIsFavorite(true);
+    }
+  }, [resep?.savedRecipes]);
+
   return (
-    <section className="flex flex-col w-full h-full lg:px-12 px-4 lg:py-16 pt-28 pb-12  gap-5 overflow-auto">
+    <section className="flex flex-col w-full h-full lg:px-12 px-4 lg:py-16 pt-28 pb-12  gap-5 overflow-auto overflow-x-hidden">
       {/* Card */}
       <div className="flex lg:flex-row flex-col h-auto items-center lg:justify-between gap-2 bg-slate-50 rounded-lg pt-4 lg:pb-12 pb-4 px-6 shadow-md">
-        <figure className="relative lg:left-4">
-          <img
-            src={resep?.resepImages?.[0]?.image_url}
-            alt=""
-            width={"400px"}
-            className="rounded-lg"
-          />
-        </figure>
+        <div className="relative flex flex-col items-center gap-1 lg:left-4 ">
+          <figure>
+            <img
+              src={image || resep?.resepImages?.[0]?.image_url}
+              alt=""
+              width={"400px"}
+              className="rounded-lg lg:min-h-[400px] lg:max-w-[400px] max-w-[300px] min-h-[300px]"
+            />
+          </figure>
+          <div className="lg:w-full lg:relative grid grid-cols-4 justify-items-center gap-2 p-2">
+            {resep?.resepImages?.map((image, index) => {
+              return (
+                <button key={index} onClick={() => setImage(image?.image_url)}>
+                  <img
+                    src={image?.image_url}
+                    alt={"image"}
+                    width={"80px"}
+                    className="rounded-lg lg:min-h-[80px] lg:max-w-[80px] max-w-[60px] min-h-[60px] border"
+                  />
+                </button>
+              );
+            })}
+          </div>
+        </div>
         <div className="lg:w-[60%] w-full h-full flex flex-col lg:pl-12 lg:py-12 lg:pr-6 py-8 gap-8">
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col gap-1 w-[60%]">
@@ -169,22 +222,45 @@ export const DetailContent = () => {
               ))}
             </div>
             {/* Deskripsi */}
-            <div className="flex flex-col gap-3">
-              <p>{resep?.history}</p>
-              <p>{resep?.description}</p>
+            <div className="flex flex-col gap-4">
+              <p className="font-semibold">{resep?.history}</p>
+              <div className="flex flex-col gap-1">
+                <p className="font-bold">Cara Membuat</p>
+                <ul className="flex flex-col gap-2">
+                  {steps?.map((step, index) => (
+                    <li key={index}>{step}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
 
           <div className="relative flex w-full items-center lg:justify-end justify-center lg:top-14">
-            <button
-              onClick={handleFavorite}
-              className="w-auto, h-auto flex items-center hover:scale-110 duration-300 active:scale-95">
-              {isFavorite ? (
-                <FaHeart className="text-4xl text-[#e71b1b]" />
-              ) : (
-                <FaRegHeart className="text-4xl text-[#e71b1b]" />
-              )}
-            </button>
+            {role === "user" ? (
+              <button
+                onClick={handleFavorite}
+                className="w-auto, h-auto flex items-center hover:scale-110 duration-300 active:scale-95">
+                {isFavorite ? (
+                  <FaHeart className="text-4xl text-[#e71b1b]" />
+                ) : (
+                  <FaRegHeart className="text-4xl text-[#e71b1b]" />
+                )}
+              </button>
+            ) : (
+              <button
+                className="w-auto, h-auto flex items-center hover:scale-110 duration-300 active:scale-95"
+                onClick={handleDelete}>
+                {isLoadingDelete ? (
+                  <Spinner
+                    width="w-9"
+                    height="h-9"
+                    color="fill-[#e71b1b] text-red-300"
+                  />
+                ) : (
+                  <FaTrashAlt className="text-4xl text-[#e71b1b]" />
+                )}
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -194,7 +270,7 @@ export const DetailContent = () => {
 
       {/* Comment user */}
 
-      {!userComment && (
+      {!userComment && role === "user" && (
         <div className="w-full py-4 flex flex-col">
           {showComment ? (
             <FormProvider {...form}>
@@ -231,11 +307,17 @@ export const DetailContent = () => {
         </div>
       )}
 
+      {role === "admin" && (
+        <Button href={`/dashboard/editresep/${resep?.id}`} width="w-[20rem]">
+          Edit Resep
+        </Button>
+      )}
+
       {/* Comment user */}
 
       {/* Comment section */}
 
-      <div className="w-full py-4 flex flex-col gap-4">
+      <div className="w-full py-6 flex flex-col gap-5">
         <h1 className="text-2xl font-semibold">Rating & Ulasan</h1>
         <div className="flex flex-col w-full gap-6">
           {userComment && (

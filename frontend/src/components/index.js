@@ -4,6 +4,7 @@ export * from "./inputs";
 export * from "./icons";
 export * from "./loadings";
 export * from "./Card";
+export * from "./CardImage";
 export * from "./sidebar";
 export * from "./comment";
 export * from "./sidebutton";

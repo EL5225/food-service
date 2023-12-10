@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { useController } from "react-hook-form";
 import { EyeOpen, EyeSlash } from "../icons";
 
@@ -10,6 +10,7 @@ export const TextField = ({
   type = "text",
   errors,
   disabled,
+  isTextArea,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const { field } = useController({
@@ -30,19 +31,38 @@ export const TextField = ({
       <label className="md:text-base text-sm font-semibold" htmlFor={name}>
         {label}
       </label>
-      <input
-        type={type === "password" ? (!showPassword ? type : "text") : type}
-        id={name}
-        placeholder={placeholder}
-        {...field}
-        className="border border-gray-500 md:py-2 py-1 px-4 text-base text-black rounded-md"
-      />
-      {type === "password" && (
-        <button
-          className="absolute flex items-center justify-center right-3 md:top-[2.6rem] top-[2.1rem]"
-          onClick={tooglePassword}>
-          {type === "password" && !showPassword ? <EyeSlash /> : <EyeOpen />}
-        </button>
+      {isTextArea && (
+        <textarea
+          id={name}
+          placeholder={placeholder}
+          {...field}
+          rows={4}
+          cols={50}
+          className="border border-gray-500 md:py-2 py-1 px-4 text-base text-black rounded-md"
+        />
+      )}
+
+      {!isTextArea && (
+        <Fragment>
+          <input
+            type={type === "password" ? (!showPassword ? type : "text") : type}
+            id={name}
+            placeholder={placeholder}
+            {...field}
+            className="border border-gray-500 md:py-2 py-1 px-4 text-base text-black rounded-md"
+          />
+          {type === "password" && (
+            <button
+              className="absolute flex items-center justify-center right-3 md:top-[2.6rem] top-[2.1rem]"
+              onClick={tooglePassword}>
+              {type === "password" && !showPassword ? (
+                <EyeSlash />
+              ) : (
+                <EyeOpen />
+              )}
+            </button>
+          )}
+        </Fragment>
       )}
 
       {errors && (

@@ -1,3 +1,5 @@
+import { jwtDecode } from "jwt-decode";
+
 export const getToken = () => {
   if (!localStorage.getItem("token")) {
     return null;
@@ -17,4 +19,13 @@ export const removeToken = () => {
     return null;
   }
   localStorage.removeItem("token");
+};
+
+export const getUserRole = () => {
+  const token = getToken();
+  if (!token) {
+    return null;
+  }
+  const decoded = jwtDecode(token);
+  return decoded.role;
 };

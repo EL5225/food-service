@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { Spinner } from "../../../components";
-import { DetailContent } from "./detailContent";
+import { DetailContent } from "./content";
 import { Await, useLoaderData } from "react-router-dom";
 
 export const DetailPage = () => {

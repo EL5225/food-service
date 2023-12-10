@@ -2,6 +2,7 @@ import { useEffect, useMemo } from "react";
 import { Heart, House, Logout } from "./icons";
 import {
   getUserMe,
+  getUserRole,
   removeToken,
   useAvatar,
   useShowSidebar,
@@ -9,12 +10,14 @@ import {
   useUserData,
 } from "../utils";
 import { Link, useNavigate } from "react-router-dom";
-import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
+import { MdAssignmentAdd, MdKeyboardDoubleArrowLeft } from "react-icons/md";
 export const Sidebar = () => {
   const { getUserData, setUserData } = useUserData();
   const { getGlobalAvatar } = useAvatar();
   const { getSidebarName } = useSidebarName();
   const { getShowSidebar, setShowSidebar } = useShowSidebar();
+
+  const role = getUserRole();
 
   const getUser = async () => {
     try {
@@ -42,9 +45,14 @@ export const Sidebar = () => {
       link: "/dashboard",
     },
     {
-      name: "Favorit",
-      icon: <Heart />,
-      link: "/dashboard/favorites",
+      name: role === "user" ? "Favorit" : "Tambah Resep",
+      icon:
+        role === "user" ? (
+          <Heart />
+        ) : (
+          <MdAssignmentAdd className="lg:text-xl md:text-2xl text-xl" />
+        ),
+      link: role === "user" ? "/dashboard/favorites" : "/dashboard/createresep",
     },
   ];
 
@@ -101,9 +109,9 @@ export const Sidebar = () => {
             <Link
               key={idx}
               to={item.link}
-              className="flex justify-center items-center gap-4 py-2 px-6">
+              className="flex justify-center items-center gap-4 py-2 xl:px-6">
               {item.icon}
-              <span className="text-lg font-semibold">{item.name}</span>
+              <span className={`text-lg font-semibold`}>{item.name}</span>
             </Link>
           ))}
         </div>
