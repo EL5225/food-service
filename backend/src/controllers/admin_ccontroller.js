@@ -3,6 +3,7 @@ const { VSResep, VSUpdateResep } = require('../libs/validation/resep');
 const cloudinary = require('../libs/cloudinary');
 const { Readable } = require('stream');
 
+
 const createResepImage = async (req, res, next) => {
   try {
     const { resepId } = req.body;
@@ -10,6 +11,7 @@ const createResepImage = async (req, res, next) => {
     const uploadStream = cloudinary.uploader.upload_stream({
       resource_type: "image",
       folder: 'resep-images',
+      public_id: req.file.originalname
     }, async (error, result) => {
       if (error) {
         console.error(error);
@@ -20,10 +22,14 @@ const createResepImage = async (req, res, next) => {
       }
 
       try {
+        const imageName = result.f
+        const imageSize = result.bytes
         const createdResepImage = await prisma.resepImage.create({
           data: {
             image_url: result.secure_url,
             resepId: parseInt(resepId),
+            image_name: req.file.originalname,
+            image_size: imageSize
           },
         });
 
@@ -32,6 +38,8 @@ const createResepImage = async (req, res, next) => {
           data: {
             id: createdResepImage.id,
             url: createdResepImage.image_url,
+            name: req.file.originalname,
+            size: createdResepImage.image_size,
           },
         });
       } catch (dbError) {
@@ -351,6 +359,8 @@ const getResepById = async (req, res, next) => {
           select: {
             id: true,
             image_url: true,
+            image_name: true,
+            image_size: true,
           },
         },
         categories: {
@@ -431,6 +441,7 @@ const getResepById = async (req, res, next) => {
         reviews: reviewsWithFormattedDate,
       };
     }));
+    
 
     res.status(200).json({
       message: 'Detail resep',

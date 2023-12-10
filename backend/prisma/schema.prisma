@@ -59,13 +59,15 @@ model Categories {
 }
 
 model ResepImage {
-  id        Int       @id @default(autoincrement())
-  image_url String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-  resepId   Int
-  resep     Resep     @relation(fields: [resepId], references: [id])
+  id         Int       @id @default(autoincrement())
+  image_url  String
+  image_name String?
+  image_size Int?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+  resepId    Int
+  resep      Resep     @relation(fields: [resepId], references: [id])
 }
 
 model Review {
