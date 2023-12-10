@@ -332,6 +332,18 @@ const getResepById = async (req, res, next) => {
         ingredients: true,
         alternatifIngredient: true,
         averageRating: true,
+        savedRecipes : {
+          select: {
+            resepId: true,
+            user: {
+              select: {
+                id: true,
+                username: true,
+                email: true,
+              }
+            }
+          }
+        },
         resepImages: {
           where: {
             deletedAt: null,
@@ -449,8 +461,8 @@ const formatDate = (date) => {
 
 module.exports = {
   createResep,
-  getAllResep,
   createResepImage,
+  getAllResep, 
   deleteResep,
   updateResep,
   deleteResepImage,
