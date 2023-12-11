@@ -15,6 +15,8 @@ router.get("/", (req, res) => {
 
 //Auth
 router.post('/register', AuthController.register);
+router.post('/verify', AuthController.verifyEmail)
+router.post('/resend', AuthController.resendOtp)
 router.post('/login', AuthController.login);
 router.get('/me', authMiddleware, AuthController.me)
 
