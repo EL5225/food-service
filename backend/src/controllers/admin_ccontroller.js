@@ -22,7 +22,6 @@ const createResepImage = async (req, res, next) => {
       }
 
       try {
-        const imageName = result.f
         const imageSize = result.bytes
         const createdResepImage = await prisma.resepImage.create({
           data: {
@@ -469,6 +468,39 @@ const formatDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 
+const deleteUser = async (req, res, next) => {
+  try {
+    const userId = parseInt(req.params.id);
+
+    const user = await prisma.users.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: 'User not found',
+      });
+    }
+
+    await prisma.users.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+
+    res.status(200).json({
+      message: 'User deleted successfully',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 module.exports = {
   createResep,
@@ -477,5 +509,6 @@ module.exports = {
   deleteResep,
   updateResep,
   deleteResepImage,
-  getResepById
+  getResepById,
+  deleteUser
 };

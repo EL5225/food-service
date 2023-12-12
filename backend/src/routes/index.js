@@ -38,6 +38,7 @@ router.post('/user/save/resep', authMiddleware, UserController.saveRecipes)
 router.get('/user/resep', authMiddleware, UserController.getAllSavedResep)
 router.put('/user', authMiddleware, UserController.updateProfile)
 router.put('/user/avatar', authMiddleware, imageUpload.single('image_url'), UserController.updateAvatarUser)
+router.delete('/user/:id', authMiddleware, adminMiddleware, AdminController.deleteUser)
 
 //rating
 router.post('/user/rating/:resepId', authMiddleware, ReveiwController.addRatingAndComment)
