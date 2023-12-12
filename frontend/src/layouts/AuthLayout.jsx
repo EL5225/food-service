@@ -11,9 +11,11 @@ export const AuthLayout = ({
 }) => {
   return (
     <main className="w-full h-screen flex items-center">
-      <div className="lg:w-[60%] w-full h-full flex flex-col justify-center items-center bg-slate-50">
+      <div className="lg:w-[60%] w-full h-full flex flex-col justify-center items-center bg-[#9EC8B9]">
         <div className={`flex flex-col gap-6 ${width} p-4`}>
-          <h1 className="md:text-3xl text-2xl font-bold">{title}</h1>
+          <h1 className="md:text-3xl text-2xl font-bold text-[#1B4242]">
+            {title}
+          </h1>
           {!noForm ? (
             <FormProvider {...form}>
               <form className="flex flex-col gap-5" onSubmit={onSubmit}>
@@ -25,10 +27,10 @@ export const AuthLayout = ({
           )}
         </div>
       </div>
-      <div className="lg:flex hidden w-[40%] h-full justify-center items-center bg-black">
+      <div className="lg:flex hidden w-[40%] h-full justify-center items-center bg-[#1B4242]">
         <Link to="/">
           <figure className="w-full flex justify-center items-center">
-            <img src="/resepku-black.png" alt="resepku-icon" />
+            <img src="/resepku-new.png" alt="resepku-icon" />
           </figure>
         </Link>
       </div>

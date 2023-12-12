@@ -29,6 +29,7 @@ export const DetailContent = () => {
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
   const [isLoadingSave, setIsLoadingSave] = useState(false);
   const [image, setImage] = useState(null);
+  const [favoritState, setFavoritState] = useState(null);
 
   const { getUserData } = useUserData();
 
@@ -84,6 +85,19 @@ export const DetailContent = () => {
       });
 
       const message = await res.message.split(" ").splice(0, 3);
+
+      if (res.isSaved) {
+        if (favoritState) {
+          setFavoritState((prev) => prev + 1);
+        }
+        setFavoritState(resep?.saved_recipe + 1);
+      } else {
+        if (favoritState) {
+          setFavoritState((prev) => prev - 1);
+        } else {
+          setFavoritState(resep?.saved_recipe - 1);
+        }
+      }
 
       setIsLoadingSave(false);
       toast.success(`${message.join(" ")} di list favoritmu`, {
@@ -195,7 +209,7 @@ export const DetailContent = () => {
         theme="light"
       />
       {/* Card */}
-      <div className="flex lg:flex-row flex-col h-auto lg:items-start items-center lg:justify-between gap-2 bg-slate-50 rounded-lg pt-4 lg:pb-12 pb-4 px-6 shadow-md">
+      <div className="flex lg:flex-row flex-col h-auto lg:items-start items-center lg:justify-between gap-2 bg-[#F3F3F3] rounded-lg pt-4 lg:pb-12 pb-4 px-6 shadow-md">
         <div className="relative flex flex-col items-center gap-1 lg:left-4 lg:mt-14 lg:ml-1">
           <figure>
             <img
@@ -278,15 +292,20 @@ export const DetailContent = () => {
                     color="fill-[#e71b1b] text-red-300"
                   />
                 )}
-                <button
-                  onClick={handleFavorite}
-                  className="w-auto, h-auto flex items-center hover:scale-110 duration-300 active:scale-95">
-                  {isFavorite ? (
-                    <FaHeart className="text-4xl text-[#e71b1b]" />
-                  ) : (
-                    <FaRegHeart className="text-4xl text-[#e71b1b]" />
-                  )}
-                </button>
+                <div className="flex flex-col items-center gap-2">
+                  <button
+                    onClick={handleFavorite}
+                    className="w-auto, h-auto flex items-center hover:scale-110 duration-300 active:scale-95">
+                    {isFavorite ? (
+                      <FaHeart className="text-4xl text-[#e71b1b]" />
+                    ) : (
+                      <FaRegHeart className="text-4xl text-[#e71b1b]" />
+                    )}
+                  </button>
+                  <span className="text-lg font-medium">
+                    {favoritState || resep?.saved_recipe}
+                  </span>
+                </div>
               </div>
             ) : (
               <button

@@ -67,10 +67,15 @@ export const Sidebar = () => {
         getShowSidebar
           ? "-translate-x-0"
           : "lg:-translate-x-0 -translate-x-full"
-      }   lg:w-[20%] w-[20rem] h-full flex flex-col items-center justify-between bg-black lg:px-6 px-2 py-8 text-white duration-200`}>
+      }   lg:w-[20%] w-[20rem] h-full flex flex-col items-center justify-between bg-[#1B4242] lg:px-6 px-2 py-8 text-slate-100 duration-200`}>
       <section className="flex flex-col items-center justify-center gap-10">
-        <figure className="bg-zinc-800 border-2 border-slate-500 py-2 px-4 rounded-3xl">
-          <img src="/resepku-plain-cut.png" alt="resepku" width={"150px"} />
+        <figure className="px-4 rounded-3xl">
+          <img
+            src="/resepku-new.png"
+            alt="resepku"
+            width={"150px"}
+            className="max-h-[200px]"
+          />
         </figure>
 
         <div className="flex flex-col items-center gap-4">

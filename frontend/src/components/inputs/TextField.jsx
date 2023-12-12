@@ -28,7 +28,9 @@ export const TextField = ({
 
   return (
     <div className="relative flex flex-col gap-1">
-      <label className="md:text-base text-sm font-semibold" htmlFor={name}>
+      <label
+        className="md:text-base text-sm font-semibold text-[#1B4242]"
+        htmlFor={name}>
         {label}
       </label>
       {isTextArea && (
@@ -49,7 +51,7 @@ export const TextField = ({
             id={name}
             placeholder={placeholder}
             {...field}
-            className="border border-gray-500 md:py-2 py-1 px-4 text-base text-black rounded-md"
+            className="border border-gray-500 md:py-2 py-1 px-4 text-base text-black rounded-md bg-slate-100"
           />
           {type === "password" && (
             <button
@@ -66,7 +68,7 @@ export const TextField = ({
       )}
 
       {errors && (
-        <span className="text-red-500 md:text-sm text-xs font-medium ml-1">
+        <span className="text-red-800 md:text-sm text-xs font-medium ml-1">
           {errors.message}
         </span>
       )}

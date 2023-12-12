@@ -7,7 +7,7 @@ import {
 
 export const RatingDisplay = ({ rating, average }) => {
   return (
-    <div className="w-full flex lg:flex-row flex-col border justify-center items-center lg:gap-14 gap-8 py-8 rounded-md shadow-md">
+    <div className="w-full flex lg:flex-row flex-col border justify-center items-center lg:gap-14 gap-8 py-8 rounded-md shadow-md ">
       <div className="flex flex-col lg:w-[30%] px-5 py-4 shadow-md border rounded-md gap-2">
         <h1 className="text-lg font-semibold ml-1">Rata-rata rating user</h1>
         <div className="flex flex-col text-xl font-semibold gap-2">
