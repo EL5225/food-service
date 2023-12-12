@@ -195,8 +195,8 @@ export const DetailContent = () => {
         theme="light"
       />
       {/* Card */}
-      <div className="flex lg:flex-row flex-col h-auto items-center lg:justify-between gap-2 bg-slate-50 rounded-lg pt-4 lg:pb-12 pb-4 px-6 shadow-md">
-        <div className="relative flex flex-col items-center gap-1 lg:left-4 ">
+      <div className="flex lg:flex-row flex-col h-auto lg:items-start items-center lg:justify-between gap-2 bg-slate-50 rounded-lg pt-4 lg:pb-12 pb-4 px-6 shadow-md">
+        <div className="relative flex flex-col items-center gap-1 lg:left-4 lg:mt-14 lg:ml-1">
           <figure>
             <img
               src={image || resep?.resepImages?.[0]?.image_url}
@@ -242,6 +242,10 @@ export const DetailContent = () => {
             {resep?.categories?.name}
           </h2>
           <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+              <p className="font-bold">Sejarah singkat</p>
+              <p className="font-semibold">{resep?.history}</p>
+            </div>
             {/* Bahan */}
             <div className="flex flex-col gap-4">
               {resepData.map((data, index) => (
@@ -253,7 +257,6 @@ export const DetailContent = () => {
             </div>
             {/* Deskripsi */}
             <div className="flex flex-col gap-4">
-              <p className="font-semibold">{resep?.history}</p>
               <div className="flex flex-col gap-1">
                 <p className="font-bold">Cara Membuat</p>
                 <ul className="flex flex-col gap-2">

@@ -10,7 +10,7 @@ import { Spinner } from "../../components";
 
 export const VerifyOTP = () => {
   const [isError, setIsError] = useState(false);
-  const [timer, setTimer] = useState(10);
+  const [timer, setTimer] = useState(120);
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
