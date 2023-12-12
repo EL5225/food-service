@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { VSRegister } from "../libs";
 import { useRegister } from "../utils";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 
 export const Register = () => {
@@ -22,10 +22,11 @@ export const Register = () => {
     resolver: zodResolver(VSRegister),
   });
 
+  const navigate = useNavigate();
+
   const {
     handleSubmit,
     formState: { errors },
-    reset,
   } = form;
 
   const { register } = useRegister();
@@ -49,7 +50,7 @@ export const Register = () => {
         theme: "light",
       });
 
-      reset();
+      navigate(`/verify-otp?email=${data.email}`);
     } catch (error) {
       setIsLoading(false);
 

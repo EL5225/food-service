@@ -16,6 +16,7 @@ const {
   CreateResepPage,
   EditResepPage,
   Profile,
+  VerifyOTP,
 } = lazily(() => import("../pages"));
 
 const router = createBrowserRouter([
@@ -58,6 +59,16 @@ const router = createBrowserRouter([
       <UnProtected>
         <Suspense fallback={<Loading />}>
           <Register />
+        </Suspense>
+      </UnProtected>
+    ),
+  },
+  {
+    path: "/verify-otp",
+    element: (
+      <UnProtected>
+        <Suspense fallback={<Loading />}>
+          <VerifyOTP />
         </Suspense>
       </UnProtected>
     ),

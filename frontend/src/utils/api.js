@@ -88,3 +88,13 @@ export const updateResep = async (id, payload) => {
   const { data } = await api.patch(`/resep/${id}`, payload);
   return data;
 };
+
+export const sendOTP = async (payload) => {
+  const { data } = await api.post("/resend", payload);
+  return data;
+};
+
+export const verifyOTP = async (payload) => {
+  const { data } = await api.post("/verify", payload);
+  return data;
+};

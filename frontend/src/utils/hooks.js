@@ -7,10 +7,12 @@ import {
   login,
   register,
   saveResep,
+  sendOTP,
   updateAvatarUser,
   updateProfile,
   updateResep,
   uploadImageResep,
+  verifyOTP,
 } from "./api";
 import { avatar, showSidebar, sidebarName, userData } from "./recoil";
 
@@ -63,6 +65,13 @@ export const useDeleteResep = () => {
     deleteResep: async (id) => await deleteResep(id),
     deleteImage: async (resep_id, image_id) =>
       await deleteResepImage(resep_id, image_id),
+  };
+};
+
+export const useOTP = () => {
+  return {
+    send: async (payload) => await sendOTP(payload),
+    verify: async (payload) => await verifyOTP(payload),
   };
 };
 
