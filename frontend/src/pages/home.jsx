@@ -2,7 +2,7 @@ import { Button } from "../components";
 
 export const Home = () => {
   return (
-    <div className="flex flex-col md:flex-row justify-between w-full items-center px-14 md:py-0 py-12 md:gap-0 gap-4 ">
+    <div className="flex flex-col md:flex-row justify-between w-full items-center px-14 md:py-0 py-12 md:gap-0 gap-4 bg-[#9EC8B9]">
       <figure className="md:hidden block">
         <img src="/food-landing.png" alt="food-landing" width={"300px"} />
       </figure>

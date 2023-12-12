@@ -103,7 +103,7 @@ export const Profile = () => {
       <form
         onSubmit={submit}
         className="w-full h-full flex flex-col items-center border-2 gap-8 lg:px-20 lg:py-16 py-20 overflow-auto">
-        <h1 className="lg:w-[45%] w-full flex items-center justify-center p-2 text-4xl font-bold border-2 rounded-sm bg-black text-white">
+        <h1 className="lg:w-[45%] w-full flex items-center justify-center p-2 text-4xl font-bold border-2 rounded-sm bg-[#1B4242] text-slate-100">
           {isEditing ? "Edit Profile" : "Profile"}
         </h1>
         {!user ? (

@@ -68,7 +68,7 @@ export const Sidebar = () => {
           ? "-translate-x-0"
           : "lg:-translate-x-0 -translate-x-full"
       }   lg:w-[20%] w-[20rem] h-full flex flex-col items-center justify-between bg-[#1B4242] lg:px-6 px-2 py-8 text-slate-100 duration-200`}>
-      <section className="flex flex-col items-center justify-center gap-10">
+      <section className="relative flex flex-col items-center justify-center gap-10">
         <figure className="px-4 rounded-3xl">
           <img
             src="/resepku-new.png"
@@ -78,7 +78,7 @@ export const Sidebar = () => {
           />
         </figure>
 
-        <div className="flex flex-col items-center gap-4">
+        <div className="relative flex flex-col items-center gap-4 bottom-12">
           <figure className="flex items-center justify-center">
             {user ? (
               <img
@@ -97,7 +97,7 @@ export const Sidebar = () => {
             )}
           </figure>
 
-          <div className="flex flex-col justify-center items-center gap-1">
+          <div className="relative flex flex-col justify-center items-center gap-1 bottom-1">
             {user && (
               <>
                 <span className="text-sm opacity-70">Selamat Datang,</span>
@@ -109,7 +109,7 @@ export const Sidebar = () => {
           </div>
         </div>
 
-        <div className="flex flex-col justify-center items-center gap-6">
+        <div className="relative flex flex-col justify-center items-center gap-6 bottom-16">
           {sideList.map((item, idx) => (
             <Link
               key={idx}

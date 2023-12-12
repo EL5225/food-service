@@ -19,7 +19,6 @@ import {
   useSaveResep,
   useUserData,
 } from "../../../utils";
-import { ToastContainer, toast } from "react-toastify";
 
 export const DetailContent = () => {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -27,9 +26,7 @@ export const DetailContent = () => {
   const [userComment, setUserComment] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
-  const [isLoadingSave, setIsLoadingSave] = useState(false);
   const [image, setImage] = useState(null);
-  const [favoritState, setFavoritState] = useState(null);
 
   const { getUserData } = useUserData();
 
@@ -70,6 +67,8 @@ export const DetailContent = () => {
     },
   });
 
+  const [favoritState, setFavoritState] = useState(resep?.saved_recipe);
+
   const { handleSubmit, control } = form;
 
   const { createReviews } = useCreateReviews();
@@ -77,39 +76,17 @@ export const DetailContent = () => {
 
   const handleFavorite = async () => {
     try {
-      setIsLoadingSave(true);
       setIsFavorite(!isFavorite);
 
       const res = await saveResep({
         resepId: resep?.id,
       });
 
-      const message = await res.message.split(" ").splice(0, 3);
-
       if (res.isSaved) {
-        if (favoritState) {
-          setFavoritState((prev) => prev + 1);
-        }
-        setFavoritState(resep?.saved_recipe + 1);
+        setFavoritState((prev) => prev + 1);
       } else {
-        if (favoritState) {
-          setFavoritState((prev) => prev - 1);
-        } else {
-          setFavoritState(resep?.saved_recipe - 1);
-        }
+        setFavoritState((prev) => prev - 1);
       }
-
-      setIsLoadingSave(false);
-      toast.success(`${message.join(" ")} di list favoritmu`, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
     } catch (error) {
       Promise.reject(error);
     }
@@ -196,18 +173,6 @@ export const DetailContent = () => {
 
   return (
     <section className="flex flex-col w-full h-full lg:px-12 px-4 lg:py-16 pt-28 pb-12  gap-5 overflow-auto overflow-x-hidden">
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
       {/* Card */}
       <div className="flex lg:flex-row flex-col h-auto lg:items-start items-center lg:justify-between gap-2 bg-[#F3F3F3] rounded-lg pt-4 lg:pb-12 pb-4 px-6 shadow-md">
         <div className="relative flex flex-col items-center gap-1 lg:left-4 lg:mt-14 lg:ml-1">
@@ -285,13 +250,6 @@ export const DetailContent = () => {
           <div className="relative flex w-full items-center lg:justify-end justify-center lg:top-14">
             {role === "user" ? (
               <div className="flex items-center gap-4">
-                {isLoadingSave && (
-                  <Spinner
-                    width="w-5"
-                    height="h-5"
-                    color="fill-[#e71b1b] text-red-300"
-                  />
-                )}
                 <div className="flex flex-col items-center gap-2">
                   <button
                     onClick={handleFavorite}

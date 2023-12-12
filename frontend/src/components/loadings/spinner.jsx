@@ -1,7 +1,7 @@
 export const Spinner = ({
   width = "w-14",
   height = "h-14",
-  color = "fill-black text-gray-200",
+  color = "fill-[#9EC8B9] text-gray-200",
 }) => {
   return (
     <div role="status">
