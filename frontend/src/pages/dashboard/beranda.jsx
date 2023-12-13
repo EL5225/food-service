@@ -100,7 +100,7 @@ export const Beranda = () => {
                 image={card.resepImages?.[0]?.image_url}
                 title={card.name}
                 culture={card.culture}
-                rating={card.averageRating}
+                rating={Math.floor(card.averageRating * 10) / 10}
               />
             ))}
           </div>

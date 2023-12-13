@@ -116,6 +116,8 @@ export const DetailContent = () => {
     { star: 1, value: resep?.current_rating_one },
   ];
 
+  const ratingFixed = Math.floor(resep?.averageRating * 10) / 10;
+
   const log = handleSubmit(async (data) => {
     try {
       setIsLoading(true);
@@ -213,7 +215,7 @@ export const DetailContent = () => {
 
             <div className="flex gap-2 items-center">
               <span className="lg:text-2xl text-xl font-semibold">
-                {resep?.averageRating}
+                {ratingFixed}
               </span>
               <FaStar className="text-[#ffc800] lg:text-2xl text-xl" />
             </div>
@@ -288,7 +290,7 @@ export const DetailContent = () => {
       </div>
 
       {/* Average Rating */}
-      <RatingDisplay rating={curentRatings} average={resep?.averageRating} />
+      <RatingDisplay rating={curentRatings} average={ratingFixed} />
 
       {/* Comment user */}
 
