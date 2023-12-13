@@ -9,8 +9,8 @@ import { VSCreateResep } from "../../../libs/validation";
 export const CreateResepContent = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [imageURL, setImageUrl] = useState(null);
-  const { create, uploadImage } = useCreateResep();
   const [imageCards, setImageCards] = useState([]);
+  const { create, uploadImage } = useCreateResep();
 
   const form = useForm({
     mode: "all",

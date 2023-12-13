@@ -82,10 +82,11 @@ export const DetailContent = () => {
         resepId: resep?.id,
       });
 
-      if (res.isSaved) {
+      if (res?.isSaved) {
         setFavoritState((prev) => prev + 1);
       } else {
         setFavoritState((prev) => prev - 1);
+        console.log(favoritState);
       }
     } catch (error) {
       Promise.reject(error);
@@ -261,7 +262,9 @@ export const DetailContent = () => {
                     )}
                   </button>
                   <span className="text-lg font-medium">
-                    {favoritState || resep?.saved_recipe}
+                    {favoritState <= 0
+                      ? 0
+                      : favoritState || resep?.saved_recipe}
                   </span>
                 </div>
               </div>
